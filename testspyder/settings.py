@@ -13,8 +13,8 @@ BOT_NAME = 'testspyder'
 
 SPIDER_MODULES = ['testspyder.spiders']
 NEWSPIDER_MODULE = 'testspyder.spiders'
-
-
+HTTPERROR_ALLOWED_CODES=[400,600]
+HTTPERROR_ALLOWED_CODES=[403]
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'testspyder (+http://www.yourdomain.com)'
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'
@@ -46,16 +46,16 @@ DOWNLOAD_DELAY = 2
 #}
 
 
-DEFAULT_REQUEST_HEADERS = {
-    'Accept': '*/*',
-    'Accept-Language': 'zh-CN,zh;q=0.9',
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'Connection': 'keep-alive',
+#DEFAULT_REQUEST_HEADERS = {
+#    'Accept': '*/*',
+#    'Accept-Language': 'zh-CN,zh;q=0.9',
+#    'Content-Type': 'application/x-www-form-urlencoded',
+#    'Connection': 'keep-alive',
     # 'Host': 'passport.weibo.cn', # 这个主机名必须注释掉，当请求头中主机名指定为某个值的时候，后面每一次发起请求都会把url的主机名重定向该主机名下面
-    'Origin': 'https://passport.weibo.cn',
-    'Referer': 'https://passport.weibo.cn/signin/login?entry=mweibo&r=https%3A%2F%2Fweibo.cn%2F%3Fluicode%3D20000174&backTitle=%CE%A2%B2%A9&vt='
+#    'Origin': 'https://passport.weibo.cn',
+#    'Referer': 'https://passport.weibo.cn/signin/login?entry=mweibo&r=https%3A%2F%2Fweibo.cn%2F%3Fluicode%3D20000174&backTitle=%CE%A2%B2%A9&vt='
 
-}
+#}
 
 
 
