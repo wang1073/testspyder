@@ -10,6 +10,8 @@ from scrapy.spiders import CrawlSpider, Rule
 
 from hashlib import sha1
 from scrapy import Selector
+import execjs
+from urllib import parse
 
 
 class ZhihuSpider(scrapy.Spider):
@@ -26,6 +28,7 @@ class ZhihuSpider(scrapy.Spider):
         'User-Agent': agent
         # 'authorization': 'oauth c3cef7c66a1843f8b3a9e6a1e3160e20'
     }
+
     client_id='c3cef7c66a1843f8b3a9e6a1e3160e20'
     grant_type= 'password'
     source='com.zhihu.web'
@@ -33,6 +36,10 @@ class ZhihuSpider(scrapy.Spider):
     timestamp2 = str(time.time() * 1000)
     followee_ids = []
     ref_source = "homepage"
+    captcha = ''
+
+
+
     # 处理签名
     def get_signnature(self,grant_type,client_id,source,timestamp):
         """
@@ -88,14 +95,15 @@ class ZhihuSpider(scrapy.Spider):
             with open('zhihu.gif', 'wb') as f:
                 f.write(img_data)
                 f.close()
-        captcha = input('请输入验证码：')
+        self.captcha = input('请输入验证码：')
 
         #继续发起一个post请求，获取验证码识别的是否正确
         yield scrapy.FormRequest(url='https://www.zhihu.com/api/v3/oauth/captcha?lang=en',
                                  callback=self.parse_post_captcha,
                                  formdata={
-                                     'input_text':str(captcha)
+                                     'input_text':str(self.captcha)
                                      }, meta={'cookiejar': response.meta['cookiejar']})
+
 
     def parse_post_captcha(self,response):
         '''
@@ -107,7 +115,7 @@ class ZhihuSpider(scrapy.Spider):
         if result:
             print('验证码输入正确')
             #访问这个sign_in这个url进行登录
-            post_data={
+            login_param={
                 'client_id': self.client_id,
                 'grant_type': self.grant_type,
                 'timestamp': self.timestamp,
@@ -115,15 +123,32 @@ class ZhihuSpider(scrapy.Spider):
                 'signature': self.get_signnature(self.grant_type, self.client_id, self.source, self.timestamp),
                 'username':'18756967802',
                 'password':'18756967802wang',
+                'captcha': self.captcha,
+                # 改为'cn'是倒立汉字验证码
+                'lang': 'en',
+                'ref_source': 'other_',
+                'utm_source': '',
                 }
+
+            post_data = self.myencrypt(login_param)
 
 
     	    #此时，需要现在settings.py文件中添加scrapy允许处理的状态码(即添加HTTPERROR_ALLOWED_CODES=[400,600])，因为scrapy默认只处理[200,300]之间的状态码。
             yield scrapy.FormRequest(
                     url='https://www.zhihu.com/api/v3/oauth/sign_in',
                     formdata=post_data,
-                    callback=self.after_login
+                    callback=self.after_login,
+                    headers=self.headers,
+                    meta={'cookiejar': response.meta['cookiejar']}
                 )
+
+    def myencrypt(self, data: dict):
+        data = parse.urlencode(data)
+        with open("Testjs2.js", "r", encoding='UTF-8') as f:
+            js_code = f.read()
+        ctx = execjs.compile(js_code)
+        res = ctx.call("Myb", data)
+        return res;
 
 
 
