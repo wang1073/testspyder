@@ -14,7 +14,7 @@ BOT_NAME = 'testspyder'
 SPIDER_MODULES = ['testspyder.spiders']
 NEWSPIDER_MODULE = 'testspyder.spiders'
 HTTPERROR_ALLOWED_CODES=[400]
-HTTPERROR_ALLOWED_CODES=[403]
+HTTPERROR_ALLOWED_CODES=[403,400]
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'testspyder (+http://www.yourdomain.com)'
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'
