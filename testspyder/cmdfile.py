@@ -1,5 +1,7 @@
- 
+
+
+#myencrypt(login_param)
 
 from scrapy.cmdline import execute
-execute(['scrapy', 'crawl', 'zhihut'])
+execute(['scrapy', 'crawl', 'zhihu'])
 
