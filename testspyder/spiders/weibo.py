@@ -1,5 +1,4 @@
 
-# -*- coding: utf-8 -*-
 import scrapy
 import json
 
@@ -7,19 +6,31 @@ class WeiSpider(scrapy.Spider):
     name = 'weibo'
     allowed_domains = ['weibo.cn']
     # start_urls = ['http://weibo.cn/']
-    # 当引擎把start_urls中的内容放入调度器中以后，会调取下载器发起get请求，现在如果需发送post请求，就需要把start_urls注视掉
+    # start_urls放入调度器后，会调取下载器发起get请求，现在需发送post请求，要把start_url注释
+    myusername=''
+    mypassword=''
 
-    # def parse(self, response):
-    #     pass
-    # 重写一个方法
+    agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36 Edg/83.0.478.45'
+    headers = {
+        'Accept': '*/*',
+        'Accept-Language': 'zh-CN,zh;q=0.9',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Connection': 'keep-alive',
+        # 'Host': 'passport.weibo.cn', # 这个主机名必须注释掉，当请求头中主机名指定为某个值的时候，后面每一次发起请求都会把url的主机名重定向该主机名下面
+        'Origin': 'https://passport.weibo.cn',
+        'Referer': 'https://passport.weibo.cn/signin/login?entry=mweibo&r=https%3A%2F%2Fweibo.cn%2F%3Fluicode%3D20000174&backTitle=%CE%A2%B2%A9&vt='
+    }
+
+
     def start_requests(self):
-        # 这个方法当下载器开始发起请求之前被调用
-        # 在这个方法我们可以把下载器截获，改变其原来的请求方式
         login_url = "https://passport.weibo.cn/sso/login" # post请求的接口url
+        
+        self.myusername = input('请输入微博账号：')
+        self.mypassword = input('请输入微博密码：')
         # post提交的数据
         data = {
-            'username': '18756967802',
-            'password': '1771938113wang',
+            'username': self.myusername,
+            'password': self.mypassword,
             'savestate': '1',
             'r': 'https://weibo.cn/?luicode=20000174',
             'ec': '0',
@@ -35,12 +46,10 @@ class WeiSpider(scrapy.Spider):
             'hfp': ''
         }
 
-        yield scrapy.FormRequest(url=login_url,formdata=data,callback=self.parse_login)
+        yield scrapy.FormRequest(url=login_url,formdata=data,headers=self.headers,callback=self.parse_login)
 
     def parse_login(self, response):
 
-        # print(response.text)
-        # 判断登录是否成功
         if json.loads(response.text)["retcode"] == 20000000:
             print("登录成功！")
             # 访问主页
