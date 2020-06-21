@@ -505,7 +505,7 @@ class ZhihuSpider(scrapy.Spider):
     def get_signnature(self,grant_type,client_id,source,timestamp):
         """
         通过 Hmac 算法计算签名
-        固定字符串+时间戳
+        字符串+时间戳 是固定的
         """
         hm=hmac.new(b'd1b964811afb40118a12068ff74a12f4',None,sha1)
         hm.update(str.encode(grant_type))
